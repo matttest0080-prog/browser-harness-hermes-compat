@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "browser-harness"
-version = "0.1.13"
+version = "0.1.13.post1"
 description = "The simplest, thinnest, and most powerful harness to control your real browser with your agent."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -24,12 +24,12 @@ classifiers = [
 dependencies = [
     "cdp-use==1.4.5",
     "fetch-use==0.4.0",
-    "pillow==12.3.0",
+    "pillow==13.0.0",
     "websockets==15.0.1",
 ]
 
 [project.optional-dependencies]
-mcp = ["mcp==2.1.1"]
+mcp = ["mcp==2.3.0"]
 
 [project.scripts]
 browser-harness = "browser_harness.run:main"
@@ -37,8 +37,9 @@ browser-harness-mcp = "browser_harness.mcp_cli:main"
 
 [project.urls]
 Homepage = "https://github.com/browser-use/browser-harness"
-Repository = "https://github.com/browser-use/browser-harness"
-Issues = "https://github.com/browser-use/browser-harness/issues"
+Repository = "https://github.com/matttest0080-prog/browser-harness-hermes-compat"
+Issues = "https://github.com/matttest0080-prog/browser-harness-hermes-compat/issues"
+Upstream = "https://github.com/browser-use/browser-harness"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -49,6 +50,9 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 browser_harness = ["SKILL.md", "video-template.html"]
+
+[tool.setuptools.data-files]
+"share/browser-harness-hermes-compat" = ["HERMES_COMPAT.md"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
