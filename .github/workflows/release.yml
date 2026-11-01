@@ -18,7 +18,6 @@ jobs:
       matrix:
         python: ["3.11", "3.12", "3.13", "3.14"]
     env:
-      BH_HOME: ${{ runner.temp }}/browser-harness-test-home
       PYTHONPATH: ""
     steps:
       - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
@@ -53,6 +52,8 @@ jobs:
           assert Path(browser_harness.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())
           PY
       - name: Run all unit tests against installed wheel
+        env:
+          BH_HOME: ${{ runner.temp }}/browser-harness-test-home
         run: python -m pytest tests/unit -q -o pythonpath=
       - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
