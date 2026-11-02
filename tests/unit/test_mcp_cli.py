@@ -17,5 +17,5 @@ def test_main_explains_missing_mcp_extra(monkeypatch):
 
     monkeypatch.setattr(builtins, "__import__", import_without_mcp)
 
-    with pytest.raises(SystemExit, match=r"pip install 'browser-harness\[mcp\]'"):
+    with pytest.raises(SystemExit, match=r"pip install 'browser-harness-hermes-compat\[mcp\]'"):
         mcp_cli.main()

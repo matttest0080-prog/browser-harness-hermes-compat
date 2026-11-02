@@ -20,7 +20,7 @@ An agent operating the harness only edits inside `agent-workspace/`:
 - `agent_helpers.py` — task-specific browser helpers the agent adds
 - `domain-skills/` — skills the agent writes and reads
 
-Package/CLI name = `browser-harness`. Skill identity (`name` + trigger) = `browser-use` (do not rename).
+Python distribution name = `browser-harness-hermes-compat` (independent Hermes fork). Import/CLI names remain `browser_harness` / `browser-harness`. Skill identity (`name` + trigger) = `browser-use` (do not rename).
 
 # Commands
 

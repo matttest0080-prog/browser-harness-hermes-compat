@@ -1,3 +1,5 @@
+> **Hermes 獨立相容性 fork：** Python distribution 為 `browser-harness-hermes-compat`，不是官方 `browser-harness`。請先讀 [來源、Pillow 13、安全安裝與發布說明](HERMES_COMPAT.md)；下方保留上游 README，當中的官方套件安裝／升級指令不是本 fork 的安裝方式。
+
 <img src="https://raw.githubusercontent.com/browser-use/media/main/browser-harness/banner-ink.svg" alt="Browser Harness" width="100%" />
 
 # Browser Harness ♞

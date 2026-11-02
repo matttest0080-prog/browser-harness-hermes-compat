@@ -3,6 +3,7 @@ name: Compatibility checks
 on:
   push:
     branches: [hermes/pillow-13-compat]
+  workflow_call:
   pull_request:
   workflow_dispatch:
 
@@ -28,13 +29,14 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Build distributions with pinned build backend
         run: |
-          python -m pip install build==1.6.0 pytest==9.1.1
+          python -m pip install build==1.6.0 pytest==9.1.1 twine==6.2.0
           echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
       - name: Build and verify reproducible wheel
         run: |
           python -m build --wheel --sdist
           python -m build --wheel --outdir dist-again
           cmp dist/*.whl dist-again/*.whl
+          python -m twine check --strict dist/*
           (cd dist && sha256sum * > SHA256SUMS)
       - name: Install real wheel with reviewed optional MCP
         run: |
@@ -46,10 +48,38 @@ jobs:
           import browser_harness
           from pathlib import Path
           import sys
-          assert m.version("browser-harness") == "0.1.13.post1"
+          assert m.version("browser-harness-hermes-compat") == "0.1.13.post1"
+          assert m.packages_distributions()["browser_harness"] == ["browser-harness-hermes-compat"]
           assert m.version("Pillow") == "13.0.0"
           assert m.version("mcp") == "2.3.0"
           assert Path(browser_harness.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())
+          PY
+      - name: Verify explicit migration from the official distribution
+        env:
+          BH_HOME: ${{ runner.temp }}/compat-migration-home
+          BH_UPDATE_CHECK: "0"
+          DO_NOT_TRACK: "1"
+        run: |
+          python -m venv "$RUNNER_TEMP/compat-migration"
+          py="$RUNNER_TEMP/compat-migration/bin/python"
+          # Only metadata is exercised while the old Pillow dependency is installed.
+          "$py" -m pip install browser-harness==0.1.13
+          "$py" -m pip uninstall --yes browser-harness
+          wheel=$(find dist -name '*.whl')
+          "$py" -m pip install "${wheel}[mcp]"
+          "$py" -m pip check
+          "$py" - <<'PY'
+          import importlib.metadata as m
+          from browser_harness import admin
+          assert m.version('browser-harness-hermes-compat') == '0.1.13.post1'
+          assert m.version('Pillow') == '13.0.0'
+          assert admin._version() == '0.1.13.post1'
+          try:
+              m.version('browser-harness')
+          except m.PackageNotFoundError:
+              pass
+          else:
+              raise AssertionError('upstream distribution still installed')
           PY
       - name: Run all unit tests against installed wheel
         env:
@@ -58,5 +88,7 @@ jobs:
       - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: compat-dist-${{ matrix.python }}
-          path: dist/
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
           if-no-files-found: error

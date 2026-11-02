@@ -127,8 +127,8 @@ _load_env()
 
 NAME = os.environ.get("BU_NAME", "default")
 BU_API = "https://api.browser-use.com/api/v3"
-PYPI_JSON = "https://pypi.org/pypi/browser-harness/json"
-VERSION_CACHE = paths.config_dir() / "version-cache.json"
+PYPI_JSON = "https://pypi.org/pypi/browser-harness-hermes-compat/json"
+VERSION_CACHE = paths.config_dir() / "version-cache-hermes-compat.json"
 VERSION_CACHE_TTL = 24 * 3600
 DOCTOR_TEXT_LIMIT = 140
 
@@ -1092,11 +1092,11 @@ def sync_local_profile(profile_name, browser=None, cloud_profile_id=None,
 
 
 def _version():
-    """Installed version of the browser-harness package. Empty string if unknown."""
+    """Installed version of the Hermes compatibility distribution; empty if unknown."""
     try:
         from importlib.metadata import PackageNotFoundError, version
         try:
-            return version("browser-harness")
+            return version("browser-harness-hermes-compat")
         except PackageNotFoundError:
             return ""
     except Exception:
@@ -1531,7 +1531,7 @@ def run_update(yes=False):
         if r.returncode != 0:
             return r.returncode
     elif mode == "pypi":
-        tool_upgrade = subprocess.run(["uv", "tool", "upgrade", "browser-harness"])
+        tool_upgrade = subprocess.run(["uv", "tool", "upgrade", "browser-harness-hermes-compat"])
         if tool_upgrade.returncode != 0:
             return tool_upgrade.returncode
     else:
