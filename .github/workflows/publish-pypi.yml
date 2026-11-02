@@ -1,0 +1,53 @@
+name: Publish independent compatibility distribution
+
+on:
+  push:
+    tags: ["pypi-v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-tag:
+    if: github.repository == 'matttest0080-prog/browser-harness-hermes-compat'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.11"
+      - name: Require the independent project, matching annotated tag, and reviewed branch ancestry
+        env:
+          TAG: ${{ github.ref_name }}
+          TAGGED_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin \
+            +refs/heads/hermes/pillow-13-compat:refs/remotes/origin/hermes/pillow-13-compat
+          python scripts/verify_pypi_tag.py "$TAG" "$TAGGED_SHA" refs/remotes/origin/hermes/pillow-13-compat
+
+  validate:
+    needs: verify-tag
+    uses: ./.github/workflows/release.yml
+
+  publish:
+    if: github.repository == 'matttest0080-prog/browser-harness-hermes-compat'
+    needs: validate
+    runs-on: ubuntu-24.04
+    environment:
+      name: pypi
+      url: https://pypi.org/project/browser-harness-hermes-compat/
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: compat-dist-3.11
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
+        with:
+          packages-dir: dist/

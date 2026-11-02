@@ -72,7 +72,7 @@ def _save_config(data: dict) -> None:
 
 def _version() -> str:
     try:
-        return version("browser-harness")
+        return version("browser-harness-hermes-compat")
     except PackageNotFoundError:
         return ""
     except Exception:

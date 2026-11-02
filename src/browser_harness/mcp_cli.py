@@ -9,7 +9,7 @@ def main() -> None:
         if exc.name == "mcp" or (exc.name and exc.name.startswith("mcp.")):
             raise SystemExit(
                 "browser-harness-mcp requires MCP support. "
-                "Install it with: pip install 'browser-harness[mcp]'"
+                "Install it with: pip install 'browser-harness-hermes-compat[mcp]'"
             ) from None
         raise
 

@@ -973,7 +973,8 @@ def test_run_update_of_installed_wheel_never_pulls_an_enclosing_repo(tmp_path, m
     assert not any(command[:1] == ["git"] for command in commands), (
         f"run_update must not shell out to git for a wheel install; ran {commands}"
     )
-    assert ["uv", "tool", "upgrade", "browser-harness"] in commands
+    assert ["uv", "tool", "upgrade", "browser-harness-hermes-compat"] in commands
+    assert ["uv", "tool", "upgrade", "browser-harness"] not in commands
 
 
 # --- Chrome's "Allow remote debugging?" popup: one pending startup per name --
